@@ -1,0 +1,8 @@
+// nodejs
+node_modules
+// gyp output
+build
+// ffmpeg build output
+deps/lib
+deps/share/doc/*
+deps/share/man/*

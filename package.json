@@ -1,0 +1,27 @@
+{
+  "name": "ffmpeg-naki",
+  "version": "1.0.0",
+  "description": "my ffmpeg build repo",
+  "main": "index.js",
+  "scripts": {
+    "test": "node hello.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nakiha/ffmpeg-naki.git"
+  },
+  "keywords": [
+    "ffmpeg"
+  ],
+  "author": "naki2642@gmail.com",
+  "license": "LGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/Nakiha/ffmpeg-naki/issues"
+  },
+  "homepage": "https://github.com/Nakiha/ffmpeg-naki#readme",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^8.0.0"
+  },
+  "gypfile": true
+}
