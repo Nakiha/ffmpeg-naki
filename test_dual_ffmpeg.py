@@ -175,20 +175,20 @@ def test_naki_build():
         # Load nakiavutil
         avutil = ffmpeg.load("nakiavutil.dll")
 
-        # Test naki_av_version_info() (with prefix)
+        # Test av_version_info() (symbols are NOT prefixed, only DLL names)
         av_version_info = ffmpeg.get_function(
             "nakiavutil.dll",
-            "naki_av_version_info",
+            "av_version_info",
             ctypes.c_char_p,
             []
         )
         version = av_version_info()
-        print(f"  naki_av_version_info(): {version.decode()}")
+        print(f"  av_version_info(): {version.decode()}")
 
-        # Test naki_avutil_version()
+        # Test avutil_version()
         avutil_version = ffmpeg.get_function(
             "nakiavutil.dll",
-            "naki_avutil_version",
+            "avutil_version",
             ctypes.c_uint,
             []
         )
@@ -196,15 +196,15 @@ def test_naki_build():
         major = (util_ver >> 16) & 0xFF
         minor = (util_ver >> 8) & 0xFF
         micro = util_ver & 0xFF
-        print(f"  naki_avutil_version(): {major}.{minor}.{micro}")
+        print(f"  avutil_version(): {major}.{minor}.{micro}")
 
         # Load nakiavcodec
         avcodec = ffmpeg.load("nakiavcodec.dll")
 
-        # Test naki_avcodec_version()
+        # Test avcodec_version()
         avcodec_version = ffmpeg.get_function(
             "nakiavcodec.dll",
-            "naki_avcodec_version",
+            "avcodec_version",
             ctypes.c_uint,
             []
         )
@@ -212,12 +212,12 @@ def test_naki_build():
         major = (codec_ver >> 16) & 0xFF
         minor = (codec_ver >> 8) & 0xFF
         micro = codec_ver & 0xFF
-        print(f"  naki_avcodec_version(): {major}.{minor}.{micro}")
+        print(f"  avcodec_version(): {major}.{minor}.{micro}")
 
-        # Test naki_avcodec_configuration()
+        # Test avcodec_configuration()
         avcodec_config = ffmpeg.get_function(
             "nakiavcodec.dll",
-            "naki_avcodec_configuration",
+            "avcodec_configuration",
             ctypes.c_char_p,
             []
         )
@@ -282,10 +282,10 @@ def test_dual_loading():
 
             naki_avutil = naki.load("nakiavutil.dll")
 
-            # Test the prefixed function
-            naki_version = ctypes.CDLL(str(NAKI_BUILD_DIR / "nakiavutil.dll")).naki_av_version_info
+            # Test the function (same symbol name, different DLL)
+            naki_version = ctypes.CDLL(str(NAKI_BUILD_DIR / "nakiavutil.dll")).av_version_info
             naki_version.restype = ctypes.c_char_p
-            print(f"  NAKI build naki_av_version_info: {naki_version().decode()}")
+            print(f"  NAKI build av_version_info: {naki_version().decode()}")
             results["naki"] = True
         except Exception as e:
             print(f"  Failed: {e}")
