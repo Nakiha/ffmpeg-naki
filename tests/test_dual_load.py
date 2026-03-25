@@ -27,18 +27,25 @@ def test_ffmpeg_full():
     if sys.platform == "win32":
         os.add_dll_directory(str(FULL_BUILD_DIR))
 
-    lib = ctypes.CDLL(str(FULL_BUILD_DIR / "avutil-60.dll"))
-    lib.av_version_info.restype = ctypes.c_char_p
+    # avutil
+    avutil = ctypes.CDLL(str(FULL_BUILD_DIR / "avutil-60.dll"))
+    avutil.av_version_info.restype = ctypes.c_char_p
 
-    ver = lib.av_version_info().decode()
+    ver = avutil.av_version_info().decode()
     print(f"  av_version_info: {ver}")
 
-    lib.avcodec_version.restype = ctypes.c_uint
-    codec_ver = lib.avcodec_version()
+    avutil.avutil_version.restype = ctypes.c_uint
+    util_ver = avutil.avutil_version()
+    print(f"  avutil_version: {(util_ver >> 16, (util_ver >> 8) & 0xFF, util_ver & 0xFF)}")
+
+    # avcodec (需要单独加载)
+    avcodec = ctypes.CDLL(str(FULL_BUILD_DIR / "avcodec-62.dll"))
+    avcodec.avcodec_version.restype = ctypes.c_uint
+    codec_ver = avcodec.avcodec_version()
     print(f"  avcodec_version: {(codec_ver >> 16, (codec_ver >> 8) & 0xFF, codec_ver & 0xFF)}")
 
-    lib.avcodec_configuration.restype = ctypes.c_char_p
-    cfg = lib.avcodec_configuration().decode()
+    avcodec.avcodec_configuration.restype = ctypes.c_char_p
+    cfg = avcodec.avcodec_configuration().decode()
     hw = any(x in cfg for x in ["nvdec", "cuda", "d3d11", "qsv", "vulkan"])
     print(f"  Hardware accel: {'YES' if hw else 'NO'}")
 
@@ -103,9 +110,9 @@ def test_dual_load():
     # 先加载 ffmpeg_full
     if FULL_BUILD_DIR.exists():
         os.add_dll_directory(str(FULL_BUILD_DIR))
-        full = ctypes.CDLL(str(FULL_BUILD_DIR / "avutil-60.dll"))
-        full.av_version_info.restype = ctypes.c_char_p
-        print(f"  ffmpeg_full: {full.av_version_info().decode()[:30]}...")
+        avutil = ctypes.CDLL(str(FULL_BUILD_DIR / "avutil-60.dll"))
+        avutil.av_version_info.restype = ctypes.c_char_p
+        print(f"  ffmpeg_full: {avutil.av_version_info().decode()[:30]}...")
     else:
         print("  ffmpeg_full: not found")
 
