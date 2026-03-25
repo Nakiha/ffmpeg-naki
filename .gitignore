@@ -2,6 +2,8 @@
 ffmpeg-dist/
 ffmpeg-dist-hwaccel/
 ffmpeg-dist-naki/
+ffmpeg-static/
+naki-nal-dist/
 build/
 
 # FFmpeg full build (external dependency, don't track)
