@@ -1,37 +1,19 @@
-# Build outputs
-dist/
+# Build
 build/
+dist/
+*.egg-info/
+
+# FFmpeg
+ffmpeg/
 ffmpeg-static/
-ffmpeg-dist*/
-naki-nal-dist/
 
-# FFmpeg full build (external dependency)
-ffmpeg_full_build/
-
-# FFmpeg source build artifacts
-ffmpeg/*.o
-ffmpeg/*.a
-ffmpeg/ffmpeg
-ffmpeg/ffmpeg_g
-ffmpeg/ffprobe
-ffmpeg/ffprobe_g
-ffmpeg/config.*
-ffmpeg/version.h
-ffmpeg/ffbuild/config.mak
-ffmpeg/libavutil/avconfig.h
-ffmpeg/libavutil/ffversion.h
-
-# Compiled objects
+# Compiled
 *.o
 *.obj
 *.a
 *.lib
-*.exp
-*.pdb
-
-# Binaries
-*.exe
 *.dll
+*.exe
 *.so
 *.dylib
 
@@ -39,23 +21,8 @@ ffmpeg/libavutil/ffversion.h
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-.Python
-venv/
+*.pyc
 .venv/
-env/
-
-# CMake
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake

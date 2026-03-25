@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61", "wheel", "cmake>=3.16"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nakiffmpeg"
+version = "1.0.0"
+description = "NAL analysis library with static FFmpeg linking"
+readme = "README.md"
+license = {text = "GPL-3.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Nakiha"}
+]
+keywords = ["ffmpeg", "nal", "h264", "hevc", "vvc", "video", "analysis"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Video",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "numpy"]
+
+[tool.setuptools]
+packages = ["nakiffmpeg"]
+
+[tool.setuptools.package-data]
+nakiffmpeg = ["*.dll", "*.so", "*.dylib"]
+
+[tool.cmake]
+source_dir = "."
+build_dir = "build"
