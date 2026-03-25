@@ -4,6 +4,9 @@ ffmpeg-dist-hwaccel/
 ffmpeg-dist-naki/
 build/
 
+# FFmpeg full build (external dependency, don't track)
+ffmpeg_full_build/
+
 # FFmpeg source build artifacts (but keep submodule)
 ffmpeg/*.o
 ffmpeg/*.a
