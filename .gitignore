@@ -1,0 +1,54 @@
+# Build outputs
+ffmpeg-dist/
+ffmpeg-dist-hwaccel/
+ffmpeg-dist-naki/
+build/
+
+# FFmpeg source build artifacts (but keep submodule)
+ffmpeg/*.o
+ffmpeg/*.a
+ffmpeg/ffmpeg
+ffmpeg/ffmpeg_g
+ffmpeg/ffprobe
+ffmpeg/ffprobe_g
+ffmpeg/config.*
+ffmpeg/version.h
+ffmpeg/libavutil/avconfig.h
+ffmpeg/libavutil/ffversion.h
+
+# Dependencies
+nv-codec-headers/
+
+# MSYS2/MinGW
+*.o
+*.a
+*.lib
+*.exe
+*.dll
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
