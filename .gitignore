@@ -1,15 +1,14 @@
 # Build outputs
-ffmpeg-dist/
-ffmpeg-dist-hwaccel/
-ffmpeg-dist-naki/
-ffmpeg-static/
-naki-nal-dist/
+dist/
 build/
+ffmpeg-static/
+ffmpeg-dist*/
+naki-nal-dist/
 
-# FFmpeg full build (external dependency, don't track)
+# FFmpeg full build (external dependency)
 ffmpeg_full_build/
 
-# FFmpeg source build artifacts (but keep submodule)
+# FFmpeg source build artifacts
 ffmpeg/*.o
 ffmpeg/*.a
 ffmpeg/ffmpeg
@@ -18,18 +17,23 @@ ffmpeg/ffprobe
 ffmpeg/ffprobe_g
 ffmpeg/config.*
 ffmpeg/version.h
+ffmpeg/ffbuild/config.mak
 ffmpeg/libavutil/avconfig.h
 ffmpeg/libavutil/ffversion.h
 
-# Dependencies
-nv-codec-headers/
-
-# MSYS2/MinGW
+# Compiled objects
 *.o
+*.obj
 *.a
 *.lib
+*.exp
+*.pdb
+
+# Binaries
 *.exe
 *.dll
+*.so
+*.dylib
 
 # IDE
 .vscode/
@@ -46,12 +50,10 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 .Python
 venv/
 .venv/
 env/
-.env/
 
 # CMake
 CMakeCache.txt

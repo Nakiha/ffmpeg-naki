@@ -21,10 +21,10 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-# Get project root directory
-PROJECT_ROOT = Path(__file__).parent.resolve()
+# Get project root directory - tests目录的父目录是项目根目录
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 FULL_BUILD_DIR = PROJECT_ROOT / "ffmpeg_full_build" / "bin"
-NAKI_BUILD_DIR = PROJECT_ROOT / "ffmpeg-dist-naki" / "bin"
+NAKI_BUILD_DIR = PROJECT_ROOT / "dist" / "naki-nal" / "bin"
 TEST_VIDEO = PROJECT_ROOT / "resource" / "video" / "h264_9s_1920x1080.mp4"
 
 

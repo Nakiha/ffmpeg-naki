@@ -20,9 +20,10 @@
 set -e
 
 # 配置
-BUILD_DIR="$(cd "$(dirname "$0")" && pwd)"
-FFMPEG_DIR="${BUILD_DIR}/ffmpeg"
-OUTPUT_DIR="${BUILD_DIR}/ffmpeg-dist-naki"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+FFMPEG_DIR="${PROJECT_ROOT}/ffmpeg"
+OUTPUT_DIR="${PROJECT_ROOT}/dist/ffmpeg-soft"
 
 # 编译器标志
 export CC="gcc"

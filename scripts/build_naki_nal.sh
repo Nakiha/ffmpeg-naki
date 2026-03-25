@@ -10,17 +10,19 @@
 #
 # 使用方法:
 #   在 MSYS2 UCRT64 终端中运行:
-#   ./build_naki_nal.sh [--clean]
+#   cd scripts && ./build_naki_nal.sh [--clean]
 #
 # ============================================================================
 
 set -e
 
-# 配置
-BUILD_DIR="$(cd "$(dirname "$0")" && pwd)"
-FFMPEG_DIR="${BUILD_DIR}/ffmpeg"
-OUTPUT_DIR="${BUILD_DIR}/naki-nal-dist"
-FFMPEG_STATIC_DIR="${BUILD_DIR}/ffmpeg-static"
+# 配置 - 项目根目录是scripts的父目录
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+FFMPEG_DIR="${PROJECT_ROOT}/ffmpeg"
+SRC_DIR="${PROJECT_ROOT}/src"
+OUTPUT_DIR="${PROJECT_ROOT}/dist/naki-nal"
+FFMPEG_STATIC_DIR="${PROJECT_ROOT}/build/ffmpeg-static"
 
 # 编译器标志
 export CC="gcc"
@@ -48,8 +50,9 @@ done
 echo "========================================"
 echo "NakiNAL Build Script"
 echo "========================================"
-echo "构建目录:     ${BUILD_DIR}"
+echo "项目根目录:   ${PROJECT_ROOT}"
 echo "FFmpeg源码:   ${FFMPEG_DIR}"
+echo "源码目录:     ${SRC_DIR}"
 echo "FFmpeg静态:   ${FFMPEG_STATIC_DIR}"
 echo "输出目录:     ${OUTPUT_DIR}"
 echo ""
@@ -71,11 +74,11 @@ if [ "$CLEAN_BUILD" = true ]; then
     echo "清理构建目录..."
     rm -rf "${OUTPUT_DIR}"
     rm -rf "${FFMPEG_STATIC_DIR}"
+    rm -rf "${PROJECT_ROOT}/build"
     if [ -d "${FFMPEG_DIR}" ]; then
         cd "${FFMPEG_DIR}"
         make clean 2>/dev/null || true
         rm -f config.mak config.h version.h ffbuild/config.mak
-        cd "${BUILD_DIR}"
     fi
 fi
 
@@ -83,6 +86,12 @@ fi
 if [ ! -d "${FFMPEG_DIR}" ]; then
     echo "错误: FFmpeg 源码不存在"
     echo "请运行: git submodule update --init"
+    exit 1
+fi
+
+# 检查源码
+if [ ! -f "${SRC_DIR}/naki_nal.c" ]; then
+    echo "错误: 源码不存在 ${SRC_DIR}/naki_nal.c"
     exit 1
 fi
 
@@ -100,27 +109,17 @@ if [ ! -f "${FFMPEG_STATIC_DIR}/lib/libavcodec.a" ]; then
     echo "配置 FFmpeg (静态库, 无硬件加速)..."
     ./configure \
         --prefix="${FFMPEG_STATIC_DIR}" \
-        \
-        `# License` \
         --enable-gpl \
         --enable-version3 \
-        \
-        `# Build type - 静态库` \
         --enable-static \
         --disable-shared \
-        \
-        `# Disable unnecessary features` \
         --disable-debug \
         --disable-doc \
         --disable-ffplay \
         --disable-ffprobe \
         --disable-ffmpeg \
-        \
-        `# Threading` \
         --disable-w32threads \
         --enable-pthreads \
-        \
-        `# DISABLE ALL HARDWARE ACCELERATION` \
         --disable-d3d11va \
         --disable-dxva2 \
         --disable-vaapi \
@@ -131,19 +130,13 @@ if [ ! -f "${FFMPEG_STATIC_DIR}/lib/libavcodec.a" ]; then
         --disable-nvdec \
         --disable-nvenc \
         --disable-hwaccels \
-        \
-        `# 禁用不需要的组件以减小体积` \
         --disable-encoders \
         --disable-muxers \
         --disable-filters \
         --disable-devices \
         --disable-network \
-        \
-        `# Architecture` \
         --arch=x86_64 \
         --target-os=mingw64 \
-        \
-        `# Additional flags` \
         --pkg-config-flags="--static" \
         --extra-cflags="${CFLAGS}" \
         --extra-cxxflags="${CXXFLAGS}" \
@@ -173,20 +166,16 @@ mkdir -p "${OUTPUT_DIR}/include"
 
 # 编译NAL库的目标文件
 echo "编译 naki_nal.c..."
-cd "${BUILD_DIR}"
 
-FFMPEG_CFLAGS="-I${FFMPEG_STATIC_DIR}/include"
-FFMPEG_LIBS="-L${FFMPEG_STATIC_DIR}/lib"
-FFMPEG_LIBS="${FFMPEG_LIBS} -lavcodec -lavutil -lswresample"
-
-gcc -c naki_nal.c -o naki_nal.o \
+gcc -c "${SRC_DIR}/naki_nal.c" -o "${PROJECT_ROOT}/build/naki_nal.o" \
     ${CFLAGS} \
     -I"${FFMPEG_STATIC_DIR}/include" \
     -DNAKI_NAL_BUILD
 
 # 创建DEF文件（只导出naki_*符号）
 echo "创建导出符号文件..."
-cat > naki_nal.def << 'EOF'
+mkdir -p "${PROJECT_ROOT}/build"
+cat > "${PROJECT_ROOT}/build/naki_nal.def" << 'EOF'
 LIBRARY naki_nal
 EXPORTS
     naki_nal_version
@@ -206,27 +195,20 @@ EOF
 # 链接DLL（静态链接FFmpeg，只导出naki_*符号）
 echo "链接 naki_nal.dll..."
 gcc -shared -o "${OUTPUT_DIR}/bin/naki_nal.dll" \
-    naki_nal.o \
-    -Wl,--def,naki_nal.def \
+    "${PROJECT_ROOT}/build/naki_nal.o" \
+    -Wl,--def,"${PROJECT_ROOT}/build/naki_nal.def" \
     -Wl,--out-implib,${OUTPUT_DIR}/lib/naki_nal.lib \
     -Wl,--whole-archive \
     ${FFMPEG_STATIC_DIR}/lib/libavcodec.a \
     ${FFMPEG_STATIC_DIR}/lib/libavutil.a \
     ${FFMPEG_STATIC_DIR}/lib/libswresample.a \
     ${FFMPEG_STATIC_DIR}/lib/libavformat.a \
-    ${FFMPEG_STATIC_DIR}/lib/libavfilter.a \
-    ${FFMPEG_STATIC_DIR}/lib/libpostproc.a \
-    ${FFMPEG_STATIC_DIR}/lib/libswscale.a \
     -Wl,--no-whole-archive \
     -lws2_32 -lsecur32 -lbcrypt -lole32 -luser32 -lgdi32 -liphlpapi \
-    -static-libgcc -static-libstdc++ \
-    -lbcrypt -lws2_32 -lsecur32 -lole32 -luser32 -lgdi32
-
-# 清理临时文件
-rm -f naki_nal.o naki_nal.def
+    -static-libgcc -static-libstdc++
 
 # 复制头文件
-cp naki_nal.h "${OUTPUT_DIR}/include/"
+cp "${SRC_DIR}/naki_nal.h" "${OUTPUT_DIR}/include/"
 
 # Strip DLL
 strip "${OUTPUT_DIR}/bin/naki_nal.dll"
@@ -241,16 +223,12 @@ echo ""
 echo "生成的文件:"
 ls -la "${OUTPUT_DIR}/bin/"*.dll 2>/dev/null || echo "  (无 DLL 文件)"
 echo ""
-echo "检查导出符号:"
+echo "检查导出符号 (只应该有 naki_*):"
 echo "----------------------------------------"
-objdump -p "${OUTPUT_DIR}/bin/naki_nal.dll" | grep "naki_" | head -20
+objdump -p "${OUTPUT_DIR}/bin/naki_nal.dll" | grep "naki_" | head -15
 echo "----------------------------------------"
 echo ""
-echo "Python 调用示例:"
+echo "Python 调用:"
 echo "  import ctypes"
 echo "  lib = ctypes.CDLL(r'${OUTPUT_DIR}/bin/naki_nal.dll')"
 echo "  print(lib.naki_nal_version())"
-echo ""
-echo "验证无FFmpeg符号导出:"
-echo "  objdump -p ${OUTPUT_DIR}/bin/naki_nal.dll | grep -E 'avcodec|avutil|swresample'"
-echo "  (应该没有输出)"

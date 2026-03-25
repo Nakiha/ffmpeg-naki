@@ -5,10 +5,11 @@
 set -e
 
 # 配置
-BUILD_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 FFMPEG_REPO="${FFMPEG_REPO:-https://github.com/FFmpeg/FFmpeg.git}"
 FFMPEG_BRANCH="${FFMPEG_BRANCH:-master}"
-OUTPUT_DIR="${BUILD_DIR}/ffmpeg-dist-hwaccel"
+OUTPUT_DIR="${PROJECT_ROOT}/dist/ffmpeg-hwaccel"
 
 # 编译器标志
 export CC="gcc"

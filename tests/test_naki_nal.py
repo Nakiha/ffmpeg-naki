@@ -19,9 +19,9 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-# Paths
-PROJECT_ROOT = Path(__file__).parent.resolve()
-NAL_LIB_DIR = PROJECT_ROOT / "naki-nal-dist" / "bin"
+# Paths - tests目录的父目录是项目根目录
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+NAL_LIB_DIR = PROJECT_ROOT / "dist" / "naki-nal" / "bin"
 FULL_BUILD_DIR = PROJECT_ROOT / "ffmpeg_full_build" / "bin"
 TEST_VIDEO = PROJECT_ROOT / "resource" / "video" / "h264_9s_1920x1080.mp4"
 
