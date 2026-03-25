@@ -13,6 +13,7 @@ if sys.platform == "win32":
 PROJECT_ROOT = Path(__file__).parent.parent
 FULL_BUILD_DIR = PROJECT_ROOT / "ffmpeg_full_build" / "bin"
 NAKI_BUILD_DIR = PROJECT_ROOT / "build" / "bin"
+NAKI_BUILD_DIR_RELEASE = PROJECT_ROOT / "build" / "bin" / "Release"
 
 
 def test_ffmpeg_full():
@@ -58,12 +59,20 @@ def test_naki_parser():
     print("\n[2] NakiParser")
     print("-" * 40)
 
-    dll = NAKI_BUILD_DIR / "naki_parser.dll"
-    if not dll.exists():
-        # 尝试其他路径
-        dll = PROJECT_ROOT / "nakiffmpeg" / "naki_parser.dll"
+    # 检查多个可能的路径
+    dll_paths = [
+        NAKI_BUILD_DIR_RELEASE / "naki_parser.dll",
+        NAKI_BUILD_DIR / "naki_parser.dll",
+        PROJECT_ROOT / "nakiffmpeg" / "naki_parser.dll",
+    ]
 
-    if not dll.exists():
+    dll = None
+    for p in dll_paths:
+        if p.exists():
+            dll = p
+            break
+
+    if not dll:
         print(f"  SKIP: naki_parser.dll not found")
         print("       Build with: cmake -B build && cmake --build build")
         return False
@@ -117,8 +126,12 @@ def test_dual_load():
         print("  ffmpeg_full: not found")
 
     # 再加载 naki_parser
-    dll = NAKI_BUILD_DIR / "naki_parser.dll"
-    if dll.exists():
+    dll_paths = [
+        NAKI_BUILD_DIR_RELEASE / "naki_parser.dll",
+        NAKI_BUILD_DIR / "naki_parser.dll",
+    ]
+    dll = next((p for p in dll_paths if p.exists()), None)
+    if dll:
         os.add_dll_directory(str(dll.parent))
         naki = ctypes.CDLL(str(dll))
         naki.naki_parser_version.restype = ctypes.c_char_p

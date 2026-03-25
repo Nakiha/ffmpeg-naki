@@ -3,20 +3,23 @@ build/
 dist/
 *.egg-info/
 
-# FFmpeg
+# FFmpeg source
 ffmpeg/
 ffmpeg-static/
-ffmpeg_full_build/
 
 # Compiled
 *.o
 *.obj
 *.a
 *.lib
-*.dll
-*.exe
 *.so
 *.dylib
+
+# DLL/EXE (except ffmpeg_full_build which uses LFS)
+*.dll
+*.exe
+!ffmpeg_full_build/bin/*.dll
+!ffmpeg_full_build/bin/*.exe
 
 # IDE
 .vscode/

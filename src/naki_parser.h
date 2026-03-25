@@ -79,12 +79,12 @@ NAKI_API int naki_parser_parse(NakiParser *parser,
 
 NAKI_API const char* naki_parser_nal_name(int nal_type, NakiCodecType codec);
 
-NAKI_API int naki_parser_annexb_to_mp4(NalParser *parser,
+NAKI_API int naki_parser_annexb_to_mp4(NakiParser *parser,
                                        const uint8_t *input, size_t input_size,
                                        uint8_t *output, size_t *output_size,
                                        int length_size);
 
-NAKI_API int naki_parser_mp4_to_annexb(NalParser *parser,
+NAKI_API int naki_parser_mp4_to_annexb(NakiParser *parser,
                                        const uint8_t *input, size_t input_size,
                                        uint8_t *output, size_t *output_size,
                                        int length_size);

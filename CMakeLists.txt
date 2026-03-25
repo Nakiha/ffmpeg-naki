@@ -29,8 +29,7 @@ target_compile_definitions(naki_parser PRIVATE NAKI_PARSER_BUILD)
 if(WIN32)
     set(DEF_FILE "${CMAKE_BINARY_DIR}/naki_parser.def")
     file(WRITE ${DEF_FILE}
-"LIBRARY naki_parser
-EXPORTS
+"EXPORTS
     naki_parser_version
     naki_parser_version_number
     naki_parser_create
@@ -42,9 +41,15 @@ EXPORTS
     naki_parser_find_units
     naki_parser_free_units
 ")
-    set_target_properties(naki_parser PROPERTIES
-        LINK_FLAGS "-Wl,--def,${DEF_FILE}"
-    )
+    if(MSVC)
+        # MSVC: 直接把DEF文件加入源文件
+        target_sources(naki_parser PRIVATE ${DEF_FILE})
+    else()
+        # MinGW: 使用链接器标志
+        set_target_properties(naki_parser PROPERTIES
+            LINK_FLAGS "-Wl,--def,${DEF_FILE}"
+        )
+    endif()
 endif()
 
 # 测试
