@@ -1,6 +1,6 @@
 # NakiFFmpeg
 
-NAL analysis library with static FFmpeg linking. No symbol conflicts with hardware-accelerated FFmpeg.
+video encoded bitstream analysis library with static FFmpeg linking. No symbol conflicts with hardware-accelerated FFmpeg.
 
 ## Build
 
